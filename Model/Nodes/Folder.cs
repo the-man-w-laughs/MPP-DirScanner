@@ -1,47 +1,21 @@
-﻿namespace Model
+﻿namespace Model.Nodes
 {
-
-
-    public class File : Component
+    public class Folder : Node
     {
-        public File(string name, long size){
-            this.name = name;
-            this.size = size;
-        }    
-        public override string Operation()
-        {
-            return "Leaf";
-        }
+        private List<Node> _children = new List<Node>();
 
-        public override bool IsComposite()
+        public string FullName;
+        public Folder(string fullName, string name): base(name)
         {
-            return false;
+            this.FullName = fullName;
         }
-    }
-
-    public class Composite : Component
-    {
-        private List<Component> _children = new List<Component>();
-        
-        public Composite(string name){
-            this.name = name;
-        }
-        public override void Add(Component component)
+        public override void Add(Node component)
         {
             this._children.Add(component);
         }
 
-        public override void Remove(Component component)
-        {
-            this._children.Remove(component);
-        }
-        public override string Operation()
-        {
-            foreach (Component component in this._children)
-            {
-
-            }
-            return "";
+        public override List<Node> GetNodes(){
+            return _children;
         }
     }
 }
