@@ -1,7 +1,8 @@
 ﻿namespace Model
 {
-    abstract class Component
+    public abstract class Component
     {
+        public long size;
         public String name;
         public abstract string Operation();
         public virtual void Add(Component component)
@@ -19,8 +20,12 @@
         }
     }
 
-    class Leaf : Component
+    public class Leaf : Component
     {
+        public Leaf(string name, long size){
+            this.name = name;
+            this.size = size;
+        }    
         public override string Operation()
         {
             return "Leaf";
@@ -35,10 +40,13 @@
     // Класс Контейнер содержит сложные компоненты, которые могут иметь
     // вложенные компоненты. Обычно объекты Контейнеры делегируют фактическую
     // работу своим детям, а затем «суммируют» результат.
-    class Composite : Component
+    public class Composite : Component
     {
-        protected List<Component> _children = new List<Component>();
+        private List<Component> _children = new List<Component>();
         
+        public Composite(string name){
+            this.name = name;
+        }
         public override void Add(Component component)
         {
             this._children.Add(component);
