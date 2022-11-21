@@ -4,7 +4,8 @@ namespace Model.Services
 {
     public class TaskQueue
     {
-        private ConcurrentQueue<Task> _waitQueue;
+        private ConcurrentQueue<Task> _taskQueue;
+		private ConcurrentQueue<Task> _waitQueue;        
         private readonly SemaphoreSlim _semaphore;
         private readonly CancellationToken _token;
         private readonly Task _startNext;
@@ -15,12 +16,14 @@ namespace Model.Services
             _startNext = new Task(() => StartNext(), _token);
             _waitNext = new Task(() => WaitNext(), _token);
             _semaphore = new SemaphoreSlim(maxThreadCount);
-            _waitQueue = new ConcurrentQueue<Task>();            
+            _taskQueue = new ConcurrentQueue<Task>();
+			_waitQueue = new ConcurrentQueue<Task>();           
         }
 
         public void Enqueue(Task task)
         {
             _waitQueue.Enqueue(task);
+            _taskQueue.Enqueue(task);            
         }
 
         public void StartAndWaitAll()
@@ -43,13 +46,13 @@ namespace Model.Services
             Task? task;
             while(!_waitNext.IsCompleted && !_token.IsCancellationRequested)
             {
-                task = _waitQueue.Where(t => t.Status == TaskStatus.Created).FirstOrDefault();
+                bool res = _taskQueue.TryDequeue(out task);
                 if (task != null)
                 {
                     try
                     {
-                        _semaphore.Wait(_token);
-                        task.Start();
+                        _semaphore.Wait(_token); // block current thread
+                        task.Start(); // start task
                     }
                     catch (OperationCanceledException)
                     {
@@ -64,8 +67,8 @@ namespace Model.Services
             Task? task;
             while (!_waitQueue.IsEmpty && !_token.IsCancellationRequested)
             {
-                bool result = _waitQueue.TryPeek(out task);
-                if (result && task != null)
+                bool res = _waitQueue.TryPeek(out task);
+                if (res && task != null)
                 {
                     try
                     {

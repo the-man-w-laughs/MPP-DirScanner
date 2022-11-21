@@ -28,13 +28,16 @@ namespace Model.Services
             }
 
             IsRunning = true;
-            _tokenSource = new CancellationTokenSource();
+
             _taskQueue = new TaskQueue(maxThreadCount, _tokenSource);
-            var token = _tokenSource.Token;
+
+            
             var directoryInfo = new DirectoryInfo(path);
             var root = new Folder(directoryInfo.FullName, directoryInfo.Name);
+            var token = _tokenSource.Token;
             var rootTask = new Task(() => ScanDirectory(root), token);
             _taskQueue.Enqueue(rootTask);
+
             _taskQueue.StartAndWaitAll();
             IsRunning = false;
 
@@ -101,7 +104,7 @@ namespace Model.Services
                     var file = new File(fileInfo.Name, fileInfo.Length);
                     folder.Add(file);
                 }
-            }
+            }   
         }
 
         private long calculateSize(Node node)
