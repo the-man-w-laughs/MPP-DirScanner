@@ -1,0 +1,27 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net6.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <UseWPF>true</UseWPF>
+	<UseWindowsForms>true</UseWindowsForms>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Resources\folder.png" />
+    <None Remove="Resources\google-docs.png" />
+    <None Remove="Resources\jpg.png" />
+    <None Remove="Resources\mp3-player.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Model\Model.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\folder.png" />
+    <Resource Include="Resources\google-docs.png" />
+    <Resource Include="Resources\jpg.png" />
+    <Resource Include="Resources\mp3-player.png" />
+  </ItemGroup>
+
+</Project>
