@@ -4,8 +4,9 @@ using System.Windows.Input;
 namespace Presentation.Command
 {
     public class RelayCommand : ICommand
-    {
+    {        
         private Action<object> execute;
+
         private Func<object, bool> canExecute;
 
         public event EventHandler? CanExecuteChanged
@@ -27,7 +28,7 @@ namespace Presentation.Command
 
         public void Execute(object? parameter)
         {
-                this.execute(parameter); 
+            this.execute(parameter);
         }
     }
 }

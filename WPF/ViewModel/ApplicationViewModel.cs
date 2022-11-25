@@ -6,6 +6,7 @@ using Model.Interfaces;
 using Presentation.Command;
 using Model.Nodes;
 using System.Windows.Forms;
+using System.Windows.Controls;
 
 namespace Presentation.ViewModel
 {
@@ -19,7 +20,25 @@ namespace Presentation.ViewModel
         public RelayCommand StopScanningCommand { get; }
 
         public ApplicationViewModel()
-        {
+        {        
+            StartScanningCommand = new RelayCommand(_ =>
+            {
+                Task.Run(() =>
+                {
+                    _isScanning = true;
+                    Folder result = _scanner.Start(DirectoryPath, _maxThreadCount);
+                    _isScanning = false;
+                    Tree = new Model.FileTree(result);
+                });
+               
+            }, _ => _directoryPath != null && !_isScanning);
+
+            StopScanningCommand = new RelayCommand(_ =>
+            {
+                _scanner.Stop();
+                _isScanning = false;
+            }, _ => _isScanning);
+
             SetDirectoryCommand = new RelayCommand(_ =>
             {
                 using var folderBrowserDialog = new FolderBrowserDialog();
@@ -29,24 +48,6 @@ namespace Presentation.ViewModel
                     Tree = null;
                 }
             });
-
-            StartScanningCommand = new RelayCommand(_ =>
-            {
-                Task.Run(() =>
-                {
-                    IsScanning = true;
-                    Folder result = _scanner.Start(DirectoryPath, _maxThreadCount);
-                    IsScanning = false;
-                    Tree = new Model.FileTree(result);
-                });
-               
-            }, _ => _directoryPath != null && !IsScanning);
-
-            StopScanningCommand = new RelayCommand(_ =>
-            {
-                _scanner.Stop();
-                IsScanning = false;
-            }, _ => IsScanning);
         }
 
         private string? _directoryPath;
@@ -75,15 +76,6 @@ namespace Presentation.ViewModel
         }
 
         private volatile bool _isScanning = false;
-        public bool IsScanning
-        {
-            get { return _isScanning; }
-            private set
-            {
-                _isScanning = value;
-                OnPropertyChanged("IsScanning");
-            }
-        }
 
         public void OnPropertyChanged([CallerMemberName] string prop = "")
         {
@@ -91,6 +83,6 @@ namespace Presentation.ViewModel
             {
                 PropertyChanged(this, new PropertyChangedEventArgs(prop));
             }
-        }
+        }        
     }
 }

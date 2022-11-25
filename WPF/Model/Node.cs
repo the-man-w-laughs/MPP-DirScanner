@@ -8,15 +8,15 @@ namespace Presentation.Model
     public class Node
     {
         public string Name { get; }
-        public long Length { get; }
+        public long Size { get; }
         public double SizeInPercent { get; }
         public bool IsDirectory { get; }
         public ObservableCollection<Node>? Children { get; internal set; }
         public string IcoPath { get;  }
-        public Node(string name, long length, double sizeInPercent, bool isDirectory = false, ObservableCollection<Node>? children = null)
+        public Node(string name, long size, double sizeInPercent, bool isDirectory = false, ObservableCollection<Node>? children = null)
         {
             Name = name;
-            Length = length;
+            Size = size;
             SizeInPercent = sizeInPercent;
             IsDirectory = isDirectory;
             Children = children;            
