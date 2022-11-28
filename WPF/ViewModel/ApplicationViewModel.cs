@@ -1,32 +1,37 @@
 ﻿using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
-using Model.Services;
 using Model.Interfaces;
 using Presentation.Command;
 using Model.Nodes;
 using System.Windows.Forms;
 using System.Windows.Controls;
+using WPF.Services;
+using Prism.Mvvm;
 
 namespace Presentation.ViewModel
 {
-    public class ApplicationViewModel : INotifyPropertyChanged
+    public class ApplicationViewModel : BindableBase, INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler? PropertyChanged;
-        private readonly IDirectoryScanner _scanner = new DirectoryScanner();
 
+        public readonly DirectoryScanner Scanner = new DirectoryScanner();
+
+        public long DynamicSize => Scanner.DynamicSize;
         public RelayCommand SetDirectoryCommand { get; }
         public RelayCommand StartScanningCommand { get; }
         public RelayCommand StopScanningCommand { get; }
 
         public ApplicationViewModel()
-        {        
+        {
+            Scanner.PropertyChanged += (s, e) => { OnPropertyChanged(e.PropertyName); };
+
             StartScanningCommand = new RelayCommand(_ =>
             {
                 Task.Run(() =>
                 {
                     _isScanning = true;
-                    Folder result = _scanner.Start(DirectoryPath, _maxThreadCount);
+                    Folder result = Scanner.Start(DirectoryPath, _maxThreadCount);
                     _isScanning = false;
                     Tree = new Model.FileTree(result);
                 });
@@ -35,7 +40,7 @@ namespace Presentation.ViewModel
 
             StopScanningCommand = new RelayCommand(_ =>
             {
-                _scanner.Stop();
+                Scanner.Stop();
                 _isScanning = false;
             }, _ => _isScanning);
 

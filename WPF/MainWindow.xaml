@@ -22,10 +22,12 @@
                 <RowDefinition Height="*"/>
                 <RowDefinition Height="*"/>
                 <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
             <TextBlock Text="Choosen directory:" Grid.Column="0" Grid.Row="0"/>
             <TextBlock Grid.Column="0" Grid.Row="1" Text="{Binding DirectoryPath}"/>
-            <TextBlock Grid.Column="0" Grid.Row="2" Text="{Binding StringFormat=(\{0\} bytes\), Path=Tree.Root.Length}"/>
+            <TextBlock Grid.Column="0" Grid.Row="3" Text="{Binding StringFormat=(\{0\} bytes\), Path=Tree.Root.Size}"/>
+            <TextBlock Grid.Column="0" Grid.Row="2" Text="{Binding DynamicSize, Mode=OneWay}"/>
         </Grid>
 
         <Button Grid.Column="0" Grid.Row="1" Content="Choose directory" Command="{Binding SetDirectoryCommand}"/>
